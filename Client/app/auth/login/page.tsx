@@ -46,14 +46,24 @@ function CredentialsStep({
       toast.success(result.message || "OTP sent to your registered email!");
       onOTPSent(data.reg_number);
     } catch (error) {
-      console.error("Login error:", error);
       if (error && typeof error === "object" && "data" in error) {
-        const errorWithData = error as { data?: { message?: string } };
+        const errorWithData = error as {
+          status?: number | string;
+          data?: { message?: string };
+        };
+        console.error("Login error:", {
+          status: errorWithData.status,
+          data: errorWithData.data,
+        });
         toast.error(
           errorWithData.data?.message ||
             "Invalid credentials. Please try again."
         );
       } else {
+        console.error(
+          "Login error:",
+          error instanceof Error ? error.message : String(error)
+        );
         toast.error("An error occurred during login. Please try again.");
       }
     }
